@@ -105,7 +105,7 @@ class StorageTest extends TestCase
     {
 
         $this->expectException(StorageOperationException::class);
-        Storage::get('');
+        Storage::get('file_none.txt');
     }
 
     public function testDeleteException()
