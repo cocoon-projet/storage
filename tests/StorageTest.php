@@ -1,11 +1,12 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use League\Flysystem\Filesystem;
+use Cocoon\StorageManager\Finder;
 use Cocoon\StorageManager\Storage;
 use Cocoon\StorageManager\FileManager;
-use Cocoon\StorageManager\Finder;
-use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Cocoon\StorageManager\Exceptions\StorageOperationException;
 
 class StorageTest extends TestCase
 {
@@ -92,4 +93,25 @@ class StorageTest extends TestCase
         Storage::rmdir('/test_directory');
         $this->assertFalse(Storage::exists('test_directory'));
     }
+    public function testPutException()
+    {
+
+        $this->expectException(StorageOperationException::class);
+        Storage::put('', 'ok');
+
+    }
+
+    public function testGetException()
+    {
+
+        $this->expectException(StorageOperationException::class);
+        Storage::get('');
+    }
+
+    public function testDeleteException()
+    {
+        $this->expectException(StorageOperationException::class);
+        Storage::delete('');
+    }
+    
 }
