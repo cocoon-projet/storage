@@ -5,7 +5,8 @@ namespace Cocoon\StorageManager\Facade;
 
 use Cocoon\StorageManager\Storage;
 
-class Store {
+class Store
+{
     public static function __callStatic($name, $arguments)
     {
         $instance = Storage::class;

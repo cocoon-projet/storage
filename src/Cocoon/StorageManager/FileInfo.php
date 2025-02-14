@@ -2,7 +2,9 @@
 
 
 namespace Cocoon\StorageManager;
+
 use Carbon\Carbon;
+
 class FileInfo
 {
     protected $info;
@@ -94,5 +96,4 @@ class FileInfo
     {
         return $this->info->visibility();
     }
-
 }

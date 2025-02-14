@@ -6,8 +6,6 @@ namespace Cocoon\StorageManager;
 use Carbon\Carbon;
 use DateTimeInterface;
 
-
-
 class FileManager
 {
     protected $file;
@@ -27,7 +25,6 @@ class FileManager
     public function put($content, array $config = [])
     {
         $this->file->write($this->getPath(), $content, $config);
-   
     }
     public function get()
     {
@@ -37,7 +34,7 @@ class FileManager
     public function delete()
     {
         $this->file->delete($this->getPath());
-    }   
+    }
 
     public function exists(): bool
     {
@@ -46,7 +43,7 @@ class FileManager
 
     public function move(string $source, string $destination, array $config = [])
     {
-        $this->file->move($source, $destination,$config);
+        $this->file->move($source, $destination, $config);
     }
 
     public function copy(string $source, string $destination, array $config = [])
@@ -100,5 +97,4 @@ class FileManager
         carbon::setLocale($locale);
         return Carbon::createFromTimestamp($this->file->lastModified());
     }
-
 }
