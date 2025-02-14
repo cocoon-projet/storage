@@ -1,0 +1,38 @@
+{
+  "name": "cocoon-projet/storage",
+  "description": "Gestion des fichiers et répertoires",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Cocoon\\": "src/Cocoon/"
+    }
+  },
+  "require": {
+    "php": "^8.0",
+    "league/flysystem": "^3.29",
+    "nesbot/carbon": "^1.39"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.3",
+    "php-coveralls/php-coveralls": "^2.1",
+    "phpunit/phpunit": "^9",
+    "tracy/tracy": "^2.10"
+  },
+  "config": {
+    "allow-plugins": {
+      "kylekatarnls/update-helper": true
+    },
+    "scripts": {
+      "test": [
+        "vendor/bin/phpcbf",
+        "vendor/bin/phpcs",
+        "vendor/bin/phpunit --colors --coverage-text"
+      ]
+    }
+  }
+}
