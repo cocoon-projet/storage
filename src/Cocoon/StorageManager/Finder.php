@@ -82,7 +82,7 @@ class Finder implements IteratorAggregate, Countable
     /**
      * Set the file sizes to include in the search.
      *
-     * @param array $size
+     * @param array|string $size
      * @return Finder
      */
     public function size($size): Finder
