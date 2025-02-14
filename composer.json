@@ -26,12 +26,12 @@
   "config": {
     "allow-plugins": {
       "kylekatarnls/update-helper": true
-    },
-    "scripts": {
-      "test": [
-        "vendor/bin/phpcbf",
-        "vendor/bin/phpcs"
-      ]
     }
+  },
+  "scripts": {
+    "test": [
+      "vendor/bin/phpcbf",
+      "vendor/bin/phpcs"
+    ]
   }
 }
