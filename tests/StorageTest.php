@@ -113,5 +113,17 @@ class StorageTest extends TestCase
         $this->expectException(StorageOperationException::class);
         Storage::delete('');
     }
+
+    public function testMoveException()
+    {
+        $this->expectException(StorageOperationException::class);
+        Storage::move('', 'ok');
+    }
+
+    public function testCopyException()
+    {
+        $this->expectException(StorageOperationException::class);
+        Storage::copy('', 'ok');
+    }
     
 }
