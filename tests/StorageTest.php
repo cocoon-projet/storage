@@ -124,6 +124,5 @@ class StorageTest extends TestCase
     {
         $this->expectException(StorageOperationException::class);
         Storage::copy('', 'ok');
-    }
-    
+    }  
 }

@@ -169,11 +169,7 @@ class Storage
      */
     public static function exists($path)
     {
-        try {
             return static::$store->fileExists($path) || static::$store->directoryExists($path);
-        } catch (\Exception $e) {
-            throw new StorageOperationException("Failed to check existence of path: $path", 0, $e);
-        }
     }
 
     /**
