@@ -195,8 +195,9 @@ class Finder implements IteratorAggregate, Countable
     public function dump()
     {
         if (function_exists('dump')) {
-            return dump($this->collection);
+            return dumpe($this->collection);
         }
-        return var_dump($this->collection);
+        var_dump($this->collection);
+        exit(1);
     }
 }
