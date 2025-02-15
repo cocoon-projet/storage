@@ -16,7 +16,7 @@ class FinderTest extends TestCase
         Storage::init($this->basePath);
     }
 
-    public function testFinderFiles()
+    public function testFinder()
     {
         $test = Storage::find()->in('/storage');
         $this->assertEquals('5', $test->count());
