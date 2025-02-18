@@ -49,7 +49,7 @@ class Finder implements IteratorAggregate, Countable
      *
      * @return Finder
      */
-    public function folders(): Finder
+    public function directories(): Finder
     {
         $this->folders = true;
         return $this;

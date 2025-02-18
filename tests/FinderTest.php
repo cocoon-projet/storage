@@ -30,6 +30,18 @@ class FinderTest extends TestCase
         $test = Storage::find()->in('/storage');
         $this->assertTrue($test->hasResults());
     }
+
+    public function testToArray()
+    {
+        $test = Storage::find()->in('storage/cache');
+        $this->assertIsArray($test->toArray());
+    }
+
+    public function testGetIterator()
+    {
+        $test = Storage::find()->in('storage/cache');
+        $this->assertInstanceOf(Iterator::class, $test->getIterator());
+    }
 }
 
 
