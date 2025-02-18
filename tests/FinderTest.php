@@ -18,8 +18,11 @@ class FinderTest extends TestCase
 
     public function testFinder()
     {
-        $test = Storage::find()->in('/storage');
-        $this->assertEquals('5', $test->count());
+        Storage::put('storage/cache/file1.txt', 'contents1');
+        Storage::put('storage/cache/file2.txt', 'contents2');
+        Storage::put('storage/cache/file3.txt', 'contents3'); 
+        $test = Storage::find()->in('storage/cache');
+        $this->assertEquals('3', $test->count());
     }
 
     public function testHasresults()
