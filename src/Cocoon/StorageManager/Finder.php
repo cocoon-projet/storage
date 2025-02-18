@@ -6,6 +6,7 @@ namespace Cocoon\StorageManager;
 use Countable;
 use ArrayIterator;
 use IteratorAggregate;
+use League\Flysystem\DirectoryListing;
 use Cocoon\StorageManager\Filter\FilterPathCollection;
 use Cocoon\StorageManager\Exceptions\StorageOperationException;
 
@@ -22,7 +23,7 @@ class Finder implements IteratorAggregate, Countable
     protected $files = false;
     protected $folders = false;
     protected $filesystem;
-    public $collection = [];
+    public array $collection = [];
 
     /**
      * Finder constructor.
@@ -184,7 +185,9 @@ class Finder implements IteratorAggregate, Countable
      */
     public function toArray(): array
     {
-        return $this->collection;
+        return $this->collection instanceof \Traversable
+            ? iterator_to_array($this->collection, false)
+            : (array) $this->collection;
     }
 
     /**
@@ -199,5 +202,21 @@ class Finder implements IteratorAggregate, Countable
         }
         var_dump($this->collection);
         exit(1);
+    }
+
+    public function sortByDate(string $order = 'ASC')
+    {
+        $array = $this->toArray();
+        usort($array, function (FileInfo $a, FileInfo $b) use ($order) {
+    
+            if ($order === 'ASC') {
+                return $a->lastModified() <=> $b->lastModified();
+            } else {
+                return $b->lastModified() <=> $a->lastModified();
+            }
+
+        });
+        $this->collection = $array;
+        return $this;
     }
 }
