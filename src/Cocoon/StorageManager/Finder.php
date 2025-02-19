@@ -204,6 +204,12 @@ class Finder implements IteratorAggregate, Countable
         exit(1);
     }
 
+    /**
+     * Sort the collection by date.
+     *
+     * @param string $order
+     * @return Finder
+     */
     public function sortByDate(string $order = 'ASC')
     {
         $array = $this->toArray();
@@ -219,6 +225,12 @@ class Finder implements IteratorAggregate, Countable
         return $this;
     }
 
+    /**
+     * Sort the collection by size.
+     *
+     * @param string $order
+     * @return Finder
+     */
     public function sortBySize(string $order = 'ASC')
     {
         $array = $this->toArray();
@@ -234,6 +246,12 @@ class Finder implements IteratorAggregate, Countable
         return $this;
     }
 
+    /**
+     * Sort the collection by extension.
+     *
+     * @param string $order
+     * @return Finder
+     */
     public function sortByExtension(string $order = 'ASC')
     {
         $array = $this->toArray();
@@ -249,6 +267,12 @@ class Finder implements IteratorAggregate, Countable
         return $this;
     }
 
+    /**
+     * Sort the collection by name.
+     *
+     * @param string $order
+     * @return Finder
+     */
     public function sortByName(string $order = 'ASC')
     {
         $array = $this->toArray();
