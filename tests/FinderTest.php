@@ -42,6 +42,18 @@ class FinderTest extends TestCase
         $test = Storage::find()->in('storage/cache');
         $this->assertInstanceOf(Iterator::class, $test->getIterator());
     }
+
+    public function testFinderFiles()
+    {
+        $test = Storage::find()->files()->in('storage/cache');
+        $this->assertEquals('3', $test->count());
+    }
+
+    public function testFinderDirectories()
+    {
+        $test = Storage::find()->directories()->in('storage');
+        $this->assertEquals('2', $test->count());
+    }
 }
 
 

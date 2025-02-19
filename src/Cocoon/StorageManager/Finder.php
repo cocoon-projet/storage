@@ -6,7 +6,6 @@ namespace Cocoon\StorageManager;
 use Countable;
 use ArrayIterator;
 use IteratorAggregate;
-use League\Flysystem\DirectoryListing;
 use Cocoon\StorageManager\Filter\FilterPathCollection;
 use Cocoon\StorageManager\Exceptions\StorageOperationException;
 
