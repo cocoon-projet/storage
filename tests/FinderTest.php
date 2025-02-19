@@ -48,12 +48,12 @@ class FinderTest extends TestCase
     public function testFinderFiles()
     {
         $test = Storage::find()->files()->in('storage/cache');
-        $this->assertEquals('3', $test->count());
+        $this->assertEquals('5', $test->count());
     }
 
     public function testFinderDirectories()
     {
-        Storage::mkdir('storage/temp');
+        Storage::mkdir('storage/dir1');
         $test = Storage::find()->directories()->in('storage');
         $this->assertEquals('2', $test->count());
     }
@@ -69,6 +69,12 @@ class FinderTest extends TestCase
         $test = Storage::find()->except(['txt'])->in('storage/cache');
         $this->assertEquals('2', $test->count());
     }
+
+    public function testSizeFilter()
+    {
+        $test = Storage::find()->files()->size('<= 10K')->in('storage/cache');
+        $this->assertEquals('5', $test->count());
+    }   
 }
 
 
