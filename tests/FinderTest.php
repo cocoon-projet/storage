@@ -21,8 +21,10 @@ class FinderTest extends TestCase
         Storage::put('storage/cache/file1.txt', 'contents1');
         Storage::put('storage/cache/file2.txt', 'contents2');
         Storage::put('storage/cache/file3.txt', 'contents3'); 
+        Storage::put('storage/cache/file1.php', '<?php echo "contents1";');
+        Storage::put('storage/cache/file2.php', '<?php echo "contents2";'); 
         $test = Storage::find()->in('storage/cache');
-        $this->assertEquals('3', $test->count());
+        $this->assertEquals('5', $test->count());
     }
 
     public function testHasresults()
@@ -53,6 +55,18 @@ class FinderTest extends TestCase
     {
         Storage::mkdir('storage/temp');
         $test = Storage::find()->directories()->in('storage');
+        $this->assertEquals('2', $test->count());
+    }
+
+    public function testOnlyFilter()
+    {
+        $test = Storage::find()->only(['txt'])->in('storage/cache');
+        $this->assertEquals('3', $test->count());
+    }
+
+    public function testExceptFilter()
+    {
+        $test = Storage::find()->except(['txt'])->in('storage/cache');
         $this->assertEquals('2', $test->count());
     }
 }
