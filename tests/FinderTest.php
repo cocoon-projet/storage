@@ -51,6 +51,7 @@ class FinderTest extends TestCase
 
     public function testFinderDirectories()
     {
+        Storage::mkdir('storage/temp');
         $test = Storage::find()->directories()->in('storage');
         $this->assertEquals('2', $test->count());
     }
