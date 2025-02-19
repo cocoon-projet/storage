@@ -208,13 +208,57 @@ class Finder implements IteratorAggregate, Countable
     {
         $array = $this->toArray();
         usort($array, function (FileInfo $a, FileInfo $b) use ($order) {
-    
+
             if ($order === 'ASC') {
                 return $a->lastModified() <=> $b->lastModified();
             } else {
                 return $b->lastModified() <=> $a->lastModified();
             }
+        });
+        $this->collection = $array;
+        return $this;
+    }
 
+    public function sortBySize(string $order = 'ASC')
+    {
+        $array = $this->toArray();
+        usort($array, function (FileInfo $a, FileInfo $b) use ($order) {
+
+            if ($order === 'ASC') {
+                return $a->size() <=> $b->size();
+            } else {
+                return $b->size() <=> $a->size();
+            }
+        });
+        $this->collection = $array;
+        return $this;
+    }
+
+    public function sortByExtension(string $order = 'ASC')
+    {
+        $array = $this->toArray();
+        usort($array, function (FileInfo $a, FileInfo $b) use ($order) {
+
+            if ($order === 'ASC') {
+                return $a->extension() <=> $b->extension();
+            } else {
+                return $b->extension() <=> $a->extension();
+            }
+        });
+        $this->collection = $array;
+        return $this;
+    }
+
+    public function sortByName(string $order = 'ASC')
+    {
+        $array = $this->toArray();
+        usort($array, function (FileInfo $a, FileInfo $b) use ($order) {
+
+            if ($order === 'ASC') {
+                return $a->filename() <=> $b->filename();
+            } else {
+                return $b->filename() <=> $a->filename();
+            }
         });
         $this->collection = $array;
         return $this;
