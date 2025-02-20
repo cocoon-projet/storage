@@ -26,7 +26,7 @@ class SizeComparator
         $this->finder= $finder;
     }
 
-    public function filterSizeComparison(string $size)
+    public function filterSizeComparison($size)
     {
         $this->finder->collection = array_filter($this->finder->collection, function ($find) use ($size) {
             return $this->sizeComparison($find->size(), $size);

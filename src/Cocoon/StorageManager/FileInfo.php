@@ -21,7 +21,7 @@ class FileInfo
      */
     public function size(): ?int
     {
-        return filesize($this->info->path());
+        return $this->info->fileSize();
     }
 
     /**

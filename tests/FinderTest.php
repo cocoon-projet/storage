@@ -72,7 +72,7 @@ class FinderTest extends TestCase
 
     public function testSizeFilter()
     {
-        $test = Storage::find()->files()->size('<= 10K')->in('storage/cache');
+        $test = Storage::find()->files()->size('< 25')->in('storage/cache');
         $this->assertEquals('5', $test->count());
     }   
 }
