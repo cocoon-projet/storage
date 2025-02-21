@@ -74,7 +74,13 @@ class FinderTest extends TestCase
     {
         $test = Storage::find()->files()->size('< 25')->in('storage/cache');
         $this->assertEquals('5', $test->count());
-    }   
+    } 
+    
+    public function testDateFilter()
+    {
+        $test = Storage::find()->files()->date('after 2021-01-01')->in('storage/cache');
+        $this->assertEquals('5', $test->count());
+    }
 }
 
 

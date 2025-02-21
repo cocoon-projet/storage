@@ -14,7 +14,7 @@ class DateComparator
     private $finder ;
 
     /**
-     * SizeComparator constructor.
+     * DateComparator constructor.
      * @param Finder $finder
      */
     public function __construct(Finder $finder)
@@ -59,7 +59,6 @@ class DateComparator
         } else {
             throw new InvalidArgumentException('la valeur (' . $matches[1] . ') n\'est pas valide un opérateur valide');
         }
-        //var_dump($compare);
         switch ($operator) {
             case '>':
                 return $file_date > $compare;
