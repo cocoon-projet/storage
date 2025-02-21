@@ -59,14 +59,14 @@ class FileManagerTest extends TestCase
 
         $this->assertEquals($this->fileContents, $contents);
     }
-/*
+
     public function testFileCopy()
     {
         $newPath = 'test_copy.txt';
         file_put_contents( __DIR__ . '/tmp/' . $this->filePath, $this->fileContents);
         //Storage::mkdir('copy');
         $fileManager = Storage::file('/tmp/test.txt');
-        $fileManager->copy( __DIR__ . '/tmp/copy/' . $newPath);
+        $fileManager->copy( '/tmp/copy/' . $newPath);
 
         $this->assertTrue(file_exists( __DIR__ . '/tmp/copy/' . $newPath));
         $this->assertEquals($this->fileContents, file_get_contents( __DIR__ . '/tmp/copy/' . $newPath));
@@ -80,7 +80,7 @@ class FileManagerTest extends TestCase
         file_put_contents( __DIR__ . '/tmp/' . $this->filePath, $this->fileContents);
 
         $fileManager = Storage::file('/tmp/test.txt');
-        $fileManager->move( __DIR__ . '/tmp/copy/' . $newPath);
+        $fileManager->move(  '/tmp/copy/' . $newPath);
 
         $this->assertFalse(file_exists(__DIR__ . '/tmp/' . $this->filePath));
         $this->assertTrue(file_exists( __DIR__ . '/tmp/copy/' . $newPath));
@@ -88,7 +88,7 @@ class FileManagerTest extends TestCase
 
         unlink( __DIR__ . '/tmp/copy/' . $newPath);
         Storage::rmdir('copy');
-    }*/
+    }
 
     public function testFileDeletion()
     {
