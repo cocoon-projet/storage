@@ -11,9 +11,9 @@ class FileManager
     protected $file;
     protected $path;
 
-    public function __construct($adapter, $path)
+    public function __construct($path, $filemanager)
     {
-        $this->file = $adapter;
+        $this->file = $filemanager;
         $this->path = $path;
     }
 
@@ -41,14 +41,14 @@ class FileManager
         return $this->file->fileExists($this->getPath());
     }
 
-    public function move(string $source, string $destination, array $config = [])
+    public function move(string $destination, array $config = [])
     {
-        $this->file->move($source, $destination, $config);
+        $this->file->move($this->getPath(), $destination, $config);
     }
 
-    public function copy(string $source, string $destination, array $config = [])
+    public function copy(string $destination, array $config = [])
     {
-        $this->file->copy($source, $destination, $config);
+        $this->file->copy($this->getPath(), $destination, $config);
     }
 
     public function lastModified(): int
