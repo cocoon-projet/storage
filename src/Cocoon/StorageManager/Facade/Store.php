@@ -5,11 +5,20 @@ namespace Cocoon\StorageManager\Facade;
 
 use Cocoon\StorageManager\Storage;
 
+/**
+ * Facade pour un accès rapide aux méthodes de Storage
+ */
 class Store
 {
-    public static function __callStatic($name, $arguments)
+    /**
+     * Handle dynamic static calls to the facade.
+     *
+     * @param string $name
+     * @param array $arguments
+     * @return mixed
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
     {
-        $instance = Storage::class;
-        return $instance->$name(...$arguments);
+        return Storage::$name(...$arguments);
     }
 }

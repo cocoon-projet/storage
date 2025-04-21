@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace Cocoon\StorageManager;
 
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\Filesystem;
 
 class Folder
 {
-    protected $dir;
-    protected $path;
+    protected Filesystem $dir;
+    protected string $path;
 
-    public function __construct(FilesystemInterface $fileSystem, $path)
+    public function __construct(Filesystem $fileSystem, string $path)
     {
         $this->path = $path;
         $this->dir = $fileSystem;

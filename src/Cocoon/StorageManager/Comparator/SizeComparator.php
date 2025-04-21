@@ -1,80 +1,107 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Cocoon\StorageManager\Comparator;
 
 use Cocoon\StorageManager\Finder;
-use InvalidArgumentException;
+use Cocoon\StorageManager\Exceptions\ValidationException;
 
 /**
- * Class SizeComparator
+ * Comparateur de taille pour le filtrage des fichiers
+ * 
+ * Cette classe permet de comparer les tailles des fichiers selon différents
+ * critères et opérateurs. Elle supporte les comparaisons avec des tailles
+ * spécifiques ou des expressions de taille.
+ * 
+ * Opérateurs supportés :
+ * - >, >=, <, <=, ==, != : comparaisons classiques
+ * 
+ * Unités supportées :
+ * - k, kb, kilo : kilo-octets (1024 octets)
+ * - m, mb, mega : méga-octets (1024² octets)
+ * - g, gb, giga : giga-octets (1024³ octets)
+ * 
  * @package Cocoon\StorageManager\Comparator
  */
 class SizeComparator
 {
-    /**
-     * @var Finder
-     */
-    private $finder ;
+    /** @var Finder Instance du moteur de recherche */
+    private Finder $finder;
+
+    /** @var string Pattern de validation des expressions de taille */
+    private const SIZE_PATTERN = '#(>|>=|<|<=|==|!=)\s*([0-9]+)\s*(k|kb|kilo|m|mb|mega|g|gb|giga)?#i';
+
+    /** @var array Multiplicateurs pour les unités de taille */
+    private const SIZE_MULTIPLIERS = [
+        'k' => 1024,
+        'kb' => 1024,
+        'kilo' => 1024,
+        'm' => 1024 * 1024,
+        'mb' => 1024 * 1024,
+        'mega' => 1024 * 1024,
+        'g' => 1024 * 1024 * 1024,
+        'gb' => 1024 * 1024 * 1024,
+        'giga' => 1024 * 1024 * 1024
+    ];
 
     /**
-     * SizeComparator constructor.
-     * @param Finder $finder
+     * Constructeur
+     * 
+     * @param Finder $finder Instance du moteur de recherche
      */
     public function __construct(Finder $finder)
     {
-        $this->finder= $finder;
-    }
-
-    public function filterSizeComparison($size)
-    {
-        $this->finder->collection = array_filter($this->finder->collection, function ($find) use ($size) {
-            return $this->sizeComparison($find->size(), $size);
-        });
+        $this->finder = $finder;
     }
 
     /**
-     * operator: >, >=, <, <=, ==, !=
-     *
-     * @param $size_file
-     * @param string $size
-     * @return bool
+     * Filtre la collection selon le critère de taille
+     * 
+     * @param string $size Expression de taille à comparer
+     * @return void
+     * @throws ValidationException Si l'expression de taille est invalide
      */
-    private function sizeComparison($size_file, string $size): bool
+    public function filterSizeComparison(string $size): void
     {
-        $k = 1000; // ko
-        $m = 1000000; // mo
-        $g = 1000000000; //go
+        $this->finder->collection = array_filter(
+            $this->finder->collection,
+            fn($find) => $this->sizeComparison($find->size(), $size)
+        );
+    }
 
-        if (!preg_match('#(>|>=|<|<=|==|!=)\s([0-9]+)([kmg])?#', $size, $matches)) {
-            throw new InvalidArgumentException('la valeur ' . $size . ' n\est pas valide');
-        }
-        $fileSize = null;
-        if (isset($matches[3])) {
-            if ($matches[3] == 'k') {
-                $fileSize = $matches[2] * $k;
-            } elseif ($matches[3] == 'm') {
-                $fileSize = $matches[2] * $m;
-            } elseif ($matches[3] == 'g') {
-                $fileSize = $matches[2] * $g;
-            }
-        } else {
-            $fileSize = $matches[2];
+    /**
+     * Compare une taille de fichier avec une expression de taille
+     * 
+     * @param int $file_size Taille du fichier en octets
+     * @param string $size Expression de taille à comparer
+     * @return bool True si la comparaison est valide
+     * @throws ValidationException Si l'expression de taille est invalide
+     */
+    public function sizeComparison(int $file_size, string $size): bool
+    {
+        if (!preg_match(self::SIZE_PATTERN, $size, $matches)) {
+            throw new ValidationException("L'expression de taille ($size) n'est pas valide");
         }
 
-        switch ($matches[1]) {
-            case '>':
-                return $size_file > $fileSize;
-            case '>=':
-                return $size_file >= $fileSize;
-            case '==':
-                return $size_file == $fileSize;
-            case '<=':
-                return $size_file <= $fileSize;
-            case '!=':
-                return $size_file != $fileSize;
-            case '<':
-                return $size_file < $fileSize;
+        $operator = $matches[1];
+        $value = (int) $matches[2];
+        $unit = strtolower($matches[3] ?? '');
+
+        if ($unit !== '' && !isset(self::SIZE_MULTIPLIERS[$unit])) {
+            throw new ValidationException("L'unité de taille ($unit) n'est pas valide");
         }
+
+        $compare = $unit !== '' ? $value * self::SIZE_MULTIPLIERS[$unit] : $value;
+
+        return match ($operator) {
+            '>' => $file_size > $compare,
+            '>=' => $file_size >= $compare,
+            '==' => $file_size === $compare,
+            '!=' => $file_size !== $compare,
+            '<=' => $file_size <= $compare,
+            '<' => $file_size < $compare,
+            default => throw new ValidationException("Opérateur invalide: $operator")
+        };
     }
 }

@@ -2,5 +2,6 @@
 /.idea
 index.php
 /storage
+/prompts
 composer.lock
 

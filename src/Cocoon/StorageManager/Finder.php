@@ -1,156 +1,320 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Cocoon\StorageManager;
 
 use Countable;
 use ArrayIterator;
 use IteratorAggregate;
+use League\Flysystem\Filesystem;
+use League\Flysystem\FileAttributes;
+use League\Flysystem\DirectoryAttributes;
 use Cocoon\StorageManager\Filter\FilterPathCollection;
 use Cocoon\StorageManager\Exceptions\StorageOperationException;
+use Cocoon\StorageManager\Comparator\DateComparator;
+use Cocoon\StorageManager\Comparator\SizeComparator;
+use Cocoon\StorageManager\Exceptions\ValidationException;
 
 /**
- * Class Finder
+ * Moteur de recherche de fichiers
+ * 
+ * Cette classe permet de rechercher des fichiers selon différents critères
+ * et de les filtrer selon leur taille, date, extension, etc.
+ * 
+ * Fonctionnalités principales :
+ * - Recherche de fichiers et répertoires
+ * - Filtrage par taille, date, extension
+ * - Tri par différents critères
+ * - Support des expressions de recherche avancées
+ * 
  * @package Cocoon\StorageManager
  */
 class Finder implements IteratorAggregate, Countable
 {
-    protected $only = [];
-    protected $except = [];
-    protected $size = [];
-    protected $date = [];
-    protected $files = false;
-    protected $folders = false;
-    protected $filesystem;
+    /** @var Filesystem Instance du système de fichiers */
+    private Filesystem $filesystem;
+
+    /** @var array Collection de fichiers trouvés */
     public array $collection = [];
 
+    /** @var array Filtres à appliquer */
+    private array $filters = [];
+
+    /** @var array Extensions à inclure */
+    private array $only = [];
+
+    /** @var array Extensions à exclure */
+    private array $except = [];
+
+    /** @var array Critères de taille */
+    private array $size = [];
+
+    /** @var array Critères de date */
+    private array $date = [];
+
+    /** @var string Chemin de recherche */
+    private string $path = '';
+
     /**
-     * Finder constructor.
-     * @param $fileSystem
+     * Constructeur
+     * 
+     * @param Filesystem $filesystem Instance du système de fichiers
      */
-    public function __construct($fileSystem)
+    public function __construct(Filesystem $filesystem)
     {
-        $this->filesystem = $fileSystem;
+        $this->filesystem = $filesystem;
     }
 
     /**
-     * Set the finder to only search for files.
-     *
-     * @return Finder
+     * Définit le chemin de recherche
+     * 
+     * @param string $path Chemin à rechercher
+     * @return $this Instance courante pour le chaînage
      */
-    public function files(): Finder
+    public function in(string $path): self
     {
-        $this->files = true;
+        $this->path = $path;
         return $this;
     }
 
     /**
-     * Set the finder to only search for folders.
-     *
-     * @return Finder
+     * Recherche uniquement les fichiers
+     * 
+     * @return $this Instance courante pour le chaînage
      */
-    public function directories(): Finder
+    public function files(): self
     {
-        $this->folders = true;
+        $this->filters['type'] = 'file';
         return $this;
     }
 
     /**
-     * Set the file extensions to include in the search.
-     *
-     * @param string|array $extension
-     * @return Finder
+     * Recherche uniquement les répertoires
+     * 
+     * @return $this Instance courante pour le chaînage
      */
-    public function only($extension): Finder
+    public function directories(): self
     {
-        $this->only = (array) $extension;
+        $this->filters['type'] = 'dir';
         return $this;
     }
 
     /**
-     * Set the file extensions to exclude from the search.
-     *
-     * @param string|array $extension
-     * @return Finder
+     * Filtre par extensions
+     * 
+     * @param string|array $extensions Extension(s) à inclure
+     * @return $this Instance courante pour le chaînage
      */
-    public function except($extension): Finder
+    public function only(string|array $extensions): self
     {
-        $this->except = (array) $extension;
+        $this->only = is_array($extensions) ? $extensions : [$extensions];
         return $this;
     }
 
     /**
-     * Set the file sizes to include in the search.
-     *
-     * @param array|string $size
-     * @return Finder
+     * Exclut des extensions
+     * 
+     * @param string|array $extensions Extension(s) à exclure
+     * @return $this Instance courante pour le chaînage
      */
-    public function size($size): Finder
+    public function except(string|array $extensions): self
     {
-        $this->size = (array) $size;
+        $this->except = is_array($extensions) ? $extensions : [$extensions];
         return $this;
     }
 
     /**
-     * Set the file dates to include in the search.
-     *
-     * @param array $date
-     * @return Finder
+     * Filtre par taille
+     * 
+     * @param string|array $size Expression(s) de taille
+     * @return $this Instance courante pour le chaînage
+     * @throws ValidationException Si l'expression de taille est invalide
      */
-    public function date($date): Finder
+    public function size(string|array $size): self
     {
-        $this->date = (array) $date;
+        $this->size = is_array($size) ? $size : [$size];
         return $this;
     }
 
     /**
-     * Set the path to search in.
-     *
-     * @param string $path
-     * @param bool $recursive
-     * @return Finder
-     * @throws StorageOperationException
+     * Filtre par date
+     * 
+     * @param string|array $date Expression(s) de date
+     * @return $this Instance courante pour le chaînage
+     * @throws ValidationException Si l'expression de date est invalide
      */
-    public function in($path, $recursive = false): Finder
+    public function date(string|array $date): self
     {
-        try {
-            $collect = $this->filesystem->listContents($path, $recursive);
-        } catch (\Exception $e) {
-            throw new StorageOperationException("Failed to list contents for path: $path", 0, $e);
+        $this->date = is_array($date) ? $date : [$date];
+        return $this;
+    }
+
+    /**
+     * Exécute la recherche
+     * 
+     * @return array Liste des fichiers trouvés
+     * @throws ValidationException En cas d'erreur de validation
+     */
+    public function get(): array
+    {
+        $this->collection = $this->listContents($this->path);
+        $this->applyFilters();
+        return $this->collection;
+    }
+
+    /**
+     * Liste le contenu d'un répertoire de manière récursive
+     * 
+     * @param string $path Chemin à lister
+     * @return array Liste des fichiers et répertoires
+     */
+    private function listContents(string $path): array
+    {
+        $contents = $this->filesystem->listContents($path, true)->toArray();
+        $result = [];
+
+        foreach ($contents as $item) {
+            if ($this->matchesFilters($item)) {
+                if (isset($this->filters['type'])) {
+                    if ($this->filters['type'] === 'file' && $item instanceof FileAttributes) {
+                        $result[] = new FileManager($item->path(), $this->filesystem);
+                    } elseif ($this->filters['type'] === 'dir' && $item instanceof DirectoryAttributes) {
+                        $result[] = new FileManager($item->path(), $this->filesystem);
+                    }
+                } else {
+                    $result[] = new FileManager($item->path(), $this->filesystem);
+                }
+            }
         }
 
-        foreach ($collect as $item) {
-            $this->collection[] = new FileInfo($item);
+        return $result;
+    }
+
+    /**
+     * Vérifie si un élément correspond aux filtres
+     * 
+     * @param FileAttributes|DirectoryAttributes $item Élément à vérifier
+     * @return bool True si l'élément correspond aux filtres
+     */
+    private function matchesFilters(FileAttributes|DirectoryAttributes $item): bool
+    {
+        if (isset($this->filters['type'])) {
+            if ($this->filters['type'] === 'file' && !($item instanceof FileAttributes)) {
+                return false;
+            }
+            if ($this->filters['type'] === 'dir' && !($item instanceof DirectoryAttributes)) {
+                return false;
+            }
         }
 
-        $filter = new FilterPathCollection($this);
+        if (!empty($this->only) && $item instanceof FileAttributes) {
+            $extension = pathinfo($item->path(), PATHINFO_EXTENSION);
+            if (!in_array($extension, $this->only)) {
+                return false;
+            }
+        }
 
-        if ($this->files) {
-            $filter->filesFilter();
+        if (!empty($this->except) && $item instanceof FileAttributes) {
+            $extension = pathinfo($item->path(), PATHINFO_EXTENSION);
+            if (in_array($extension, $this->except)) {
+                return false;
+            }
         }
-        if ($this->folders) {
-            $filter->foldersFilter();
-        }
-        if (!empty($this->only)) {
-            $filter->onlyFilter($this->only);
-        }
-        if (!empty($this->except)) {
-            $filter->exceptFilter($this->except);
-        }
-        if (!empty($this->date)) {
-            $filter->dateFilter($this->date);
-        }
+
+        return true;
+    }
+
+    /**
+     * Applique les filtres à la collection
+     * 
+     * @return void
+     * @throws ValidationException En cas d'erreur de validation
+     */
+    private function applyFilters(): void
+    {
         if (!empty($this->size)) {
-            $filter->sizeFilter($this->size);
+            $comparator = new SizeComparator($this);
+            foreach ($this->size as $size) {
+                $comparator->filterSizeComparison($size);
+            }
         }
 
+        if (!empty($this->date)) {
+            $comparator = new DateComparator($this);
+            foreach ($this->date as $date) {
+                $comparator->filterDateComparison($date);
+            }
+        }
+    }
+
+    /**
+     * Trie la collection par date de modification
+     * 
+     * @param bool $descending True pour trier par ordre décroissant
+     * @return $this Instance courante pour le chaînage
+     */
+    public function sortByDate(bool $descending = false): self
+    {
+        usort($this->collection, function ($a, $b) use ($descending) {
+            $result = $a->lastModified() <=> $b->lastModified();
+            return $descending ? -$result : $result;
+        });
         return $this;
     }
 
     /**
-     * Check if the finder has results.
-     *
-     * @return bool
+     * Trie la collection par taille
+     * 
+     * @param bool $descending True pour trier par ordre décroissant
+     * @return $this Instance courante pour le chaînage
+     */
+    public function sortBySize(bool $descending = false): self
+    {
+        usort($this->collection, function ($a, $b) use ($descending) {
+            $result = $a->size() <=> $b->size();
+            return $descending ? -$result : $result;
+        });
+        return $this;
+    }
+
+    /**
+     * Trie la collection par extension
+     * 
+     * @param bool $descending True pour trier par ordre décroissant
+     * @return $this Instance courante pour le chaînage
+     */
+    public function sortByExtension(bool $descending = false): self
+    {
+        usort($this->collection, function ($a, $b) use ($descending) {
+            $result = strcasecmp(
+                pathinfo($a->getPath(), PATHINFO_EXTENSION),
+                pathinfo($b->getPath(), PATHINFO_EXTENSION)
+            );
+            return $descending ? -$result : $result;
+        });
+        return $this;
+    }
+
+    /**
+     * Trie la collection par nom
+     * 
+     * @param bool $descending True pour trier par ordre décroissant
+     * @return $this Instance courante pour le chaînage
+     */
+    public function sortByName(bool $descending = false): self
+    {
+        usort($this->collection, function ($a, $b) use ($descending) {
+            $result = strcasecmp($a->getPath(), $b->getPath());
+            return $descending ? -$result : $result;
+        });
+        return $this;
+    }
+
+    /**
+     * Vérifie si des résultats ont été trouvés
+     * 
+     * @return bool True si des résultats existent
      */
     public function hasResults(): bool
     {
@@ -158,8 +322,8 @@ class Finder implements IteratorAggregate, Countable
     }
 
     /**
-     * Get an iterator for the collection.
-     *
+     * Obtient un itérateur pour la collection
+     * 
      * @return ArrayIterator
      */
     public function getIterator(): ArrayIterator
@@ -168,9 +332,9 @@ class Finder implements IteratorAggregate, Countable
     }
 
     /**
-     * Get the count of items in the collection.
-     *
-     * @return int
+     * Obtient le nombre d'éléments dans la collection
+     * 
+     * @return int Nombre d'éléments
      */
     public function count(): int
     {
@@ -178,9 +342,9 @@ class Finder implements IteratorAggregate, Countable
     }
 
     /**
-     * Get the collection as an array.
-     *
-     * @return array
+     * Convertit la collection en tableau
+     * 
+     * @return array Tableau des résultats
      */
     public function toArray(): array
     {
@@ -190,100 +354,17 @@ class Finder implements IteratorAggregate, Countable
     }
 
     /**
-     * Dump the collection.
-     *
+     * Affiche le contenu de la collection (débogage)
+     * 
      * @return void
      */
-    public function dump()
+    public function dump(): void
     {
         if (function_exists('dump')) {
-            return dumpe($this->collection);
+            dump($this->collection);
+            return;
         }
         var_dump($this->collection);
         exit(1);
-    }
-
-    /**
-     * Sort the collection by date.
-     *
-     * @param string $order
-     * @return Finder
-     */
-    public function sortByDate(string $order = 'ASC')
-    {
-        $array = $this->toArray();
-        usort($array, function (FileInfo $a, FileInfo $b) use ($order) {
-
-            if ($order === 'ASC') {
-                return $a->lastModified() <=> $b->lastModified();
-            } else {
-                return $b->lastModified() <=> $a->lastModified();
-            }
-        });
-        $this->collection = $array;
-        return $this;
-    }
-
-    /**
-     * Sort the collection by size.
-     *
-     * @param string $order
-     * @return Finder
-     */
-    public function sortBySize(string $order = 'ASC')
-    {
-        $array = $this->toArray();
-        usort($array, function (FileInfo $a, FileInfo $b) use ($order) {
-
-            if ($order === 'ASC') {
-                return $a->size() <=> $b->size();
-            } else {
-                return $b->size() <=> $a->size();
-            }
-        });
-        $this->collection = $array;
-        return $this;
-    }
-
-    /**
-     * Sort the collection by extension.
-     *
-     * @param string $order
-     * @return Finder
-     */
-    public function sortByExtension(string $order = 'ASC')
-    {
-        $array = $this->toArray();
-        usort($array, function (FileInfo $a, FileInfo $b) use ($order) {
-
-            if ($order === 'ASC') {
-                return $a->extension() <=> $b->extension();
-            } else {
-                return $b->extension() <=> $a->extension();
-            }
-        });
-        $this->collection = $array;
-        return $this;
-    }
-
-    /**
-     * Sort the collection by name.
-     *
-     * @param string $order
-     * @return Finder
-     */
-    public function sortByName(string $order = 'ASC')
-    {
-        $array = $this->toArray();
-        usort($array, function (FileInfo $a, FileInfo $b) use ($order) {
-
-            if ($order === 'ASC') {
-                return $a->filename() <=> $b->filename();
-            } else {
-                return $b->filename() <=> $a->filename();
-            }
-        });
-        $this->collection = $array;
-        return $this;
     }
 }
