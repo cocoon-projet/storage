@@ -14,16 +14,16 @@ use League\Flysystem\FilesystemAdapter;
 
 /**
  * Classe principale de gestion des fichiers
- * 
+ *
  * Cette classe fournit une interface simple et puissante pour la gestion des fichiers.
  * Elle utilise Flysystem en interne pour assurer la compatibilité avec différents systèmes de stockage.
- * 
+ *
  * Fonctionnalités principales :
  * - Gestion des fichiers (lecture, écriture, suppression)
  * - Gestion des répertoires
  * - Recherche de fichiers avec filtres
  * - Support de différents adaptateurs de stockage
- * 
+ *
  * @package Cocoon\StorageManager
  */
 class Storage
@@ -45,7 +45,7 @@ class Storage
 
     /**
      * Initialise le stockage avec une configuration
-     * 
+     *
      * @param string|array|StorageConfig $config Configuration du stockage
      * @return bool|null Retourne false si déjà initialisé, null sinon
      */
@@ -81,7 +81,7 @@ class Storage
 
     /**
      * Obtient la configuration actuelle
-     * 
+     *
      * @return StorageConfig|null Configuration actuelle
      */
     public static function getConfig(): ?StorageConfig
@@ -91,7 +91,7 @@ class Storage
 
     /**
      * Obtient une instance de gestionnaire de fichier pour le chemin spécifié
-     * 
+     *
      * @param string $path Chemin du fichier
      * @return FileManager Instance du gestionnaire de fichier
      */
@@ -102,7 +102,7 @@ class Storage
 
     /**
      * Obtient une instance de recherche de fichiers
-     * 
+     *
      * @return Finder Instance du moteur de recherche
      */
     public static function find(): Finder
@@ -112,7 +112,7 @@ class Storage
 
     /**
      * Définit ou obtient l'adaptateur de stockage
-     * 
+     *
      * @param FilesystemAdapter|null $adapter Nouvel adaptateur
      * @return FilesystemAdapter|null Adaptateur actuel
      */
@@ -127,7 +127,7 @@ class Storage
 
     /**
      * Écrit du contenu dans un fichier
-     * 
+     *
      * @param string $path Chemin du fichier
      * @param string $contents Contenu à écrire
      * @param array $config Options de configuration
@@ -145,7 +145,7 @@ class Storage
 
     /**
      * Lit le contenu d'un fichier
-     * 
+     *
      * @param string $path Chemin du fichier
      * @return string|false Contenu du fichier ou false en cas d'erreur
      * @throws StorageOperationException En cas d'erreur de lecture
@@ -161,7 +161,7 @@ class Storage
 
     /**
      * Supprime un fichier
-     * 
+     *
      * @param string $path Chemin du fichier
      * @return void
      * @throws StorageOperationException En cas d'erreur de suppression
@@ -177,7 +177,7 @@ class Storage
 
     /**
      * Copie un fichier vers un nouvel emplacement
-     * 
+     *
      * @param string $path Chemin source
      * @param string $newpath Chemin de destination
      * @return void
@@ -194,7 +194,7 @@ class Storage
 
     /**
      * Déplace un fichier vers un nouvel emplacement
-     * 
+     *
      * @param string $path Chemin source
      * @param string $newpath Chemin de destination
      * @return void
@@ -211,7 +211,7 @@ class Storage
 
     /**
      * Vérifie l'existence d'un fichier ou d'un répertoire
-     * 
+     *
      * @param string $path Chemin à vérifier
      * @return bool True si le fichier ou le répertoire existe
      */
@@ -222,7 +222,7 @@ class Storage
 
     /**
      * Crée un répertoire
-     * 
+     *
      * @param string $dirname Nom du répertoire
      * @return void
      * @throws StorageOperationException En cas d'erreur de création
@@ -238,7 +238,7 @@ class Storage
 
     /**
      * Supprime un répertoire
-     * 
+     *
      * @param string $dirname Nom du répertoire
      * @return void
      * @throws StorageOperationException En cas d'erreur de suppression

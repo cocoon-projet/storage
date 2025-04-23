@@ -10,17 +10,17 @@ use Cocoon\StorageManager\Finder;
 
 /**
  * Classe de filtrage des collections de fichiers
- * 
+ *
  * Cette classe permet d'appliquer différents filtres sur une collection de fichiers
  * et répertoires. Elle utilise des comparateurs spécialisés pour les filtres
  * complexes comme la taille et la date.
- * 
+ *
  * Fonctionnalités principales :
  * - Filtrage par type (fichiers/répertoires)
  * - Filtrage par extension
  * - Filtrage par taille
  * - Filtrage par date
- * 
+ *
  * @package Cocoon\StorageManager\Filter
  */
 class FilterPathCollection
@@ -30,7 +30,7 @@ class FilterPathCollection
 
     /**
      * Constructeur
-     * 
+     *
      * @param Finder $finder Instance du moteur de recherche
      */
     public function __construct(Finder $finder)
@@ -40,7 +40,7 @@ class FilterPathCollection
 
     /**
      * Filtre la collection pour ne garder que les répertoires
-     * 
+     *
      * @return void
      */
     public function foldersFilter(): void
@@ -52,7 +52,7 @@ class FilterPathCollection
 
     /**
      * Filtre la collection pour ne garder que les fichiers
-     * 
+     *
      * @return void
      */
     public function filesFilter(): void
@@ -64,7 +64,7 @@ class FilterPathCollection
 
     /**
      * Filtre la collection selon les critères de taille
-     * 
+     *
      * @param array|string $size Critère(s) de taille
      * @return void
      */
@@ -82,7 +82,7 @@ class FilterPathCollection
 
     /**
      * Filtre la collection selon les critères de date
-     * 
+     *
      * @param array|string $date Critère(s) de date
      * @return void
      */
@@ -100,7 +100,7 @@ class FilterPathCollection
 
     /**
      * Filtre la collection pour ne garder que les fichiers avec les extensions spécifiées
-     * 
+     *
      * @param array $extension Liste des extensions à inclure
      * @return void
      */
@@ -113,7 +113,7 @@ class FilterPathCollection
 
     /**
      * Filtre la collection pour exclure les fichiers avec les extensions spécifiées
-     * 
+     *
      * @param array $extension Liste des extensions à exclure
      * @return void
      */

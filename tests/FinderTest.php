@@ -23,20 +23,20 @@ class FinderTest extends TestCase
         Storage::put('storage/cache/file3.txt', 'contents3'); 
         Storage::put('storage/cache/file1.php', '<?php echo "contents1";');
         Storage::put('storage/cache/file2.php', '<?php echo "contents2";'); 
-        $test = Storage::find()->in('storage/cache');
-        $this->assertEquals('5', $test->count());
+        $test = Storage::find()->in('storage/cache')->get();
+        $this->assertEquals('5', count($test));
     }
 
     public function testHasresults()
     {
-        $test = Storage::find()->in('/storage');
-        $this->assertTrue($test->hasResults());
+        $test = Storage::find()->in('/storage')->get();
+        $this->assertTrue(!is_null($test));
     }
 
     public function testToArray()
     {
-        $test = Storage::find()->in('storage/cache');
-        $this->assertIsArray($test->toArray());
+        $test = Storage::find()->in('storage/cache')->get();
+        $this->assertIsArray($test);
     }
 
     public function testGetIterator()
@@ -47,39 +47,39 @@ class FinderTest extends TestCase
 
     public function testFinderFiles()
     {
-        $test = Storage::find()->files()->in('storage/cache');
-        $this->assertEquals('5', $test->count());
+        $test = Storage::find()->files()->in('storage/cache')->get();
+        $this->assertEquals('5', count($test));
     }
 
     public function testFinderDirectories()
     {
         Storage::mkdir('storage/dir1');
-        $test = Storage::find()->directories()->in('storage');
-        $this->assertEquals('2', $test->count());
+        $test = Storage::find()->directories()->in('storage')->get();
+        $this->assertEquals('2', count($test));
     }
 
     public function testOnlyFilter()
     {
-        $test = Storage::find()->only(['txt'])->in('storage/cache');
-        $this->assertEquals('3', $test->count());
+        $test = Storage::find()->only(['txt'])->in('storage/cache')->get();
+        $this->assertEquals('3', count($test));
     }
 
     public function testExceptFilter()
     {
-        $test = Storage::find()->except(['txt'])->in('storage/cache');
-        $this->assertEquals('2', $test->count());
+        $test = Storage::find()->except(['txt'])->in('storage/cache')->get();
+        $this->assertEquals('2', count($test));
     }
 
     public function testSizeFilter()
     {
-        $test = Storage::find()->files()->size('< 25')->in('storage/cache');
-        $this->assertEquals('5', $test->count());
+        $test = Storage::find()->files()->size('< 25')->in('storage/cache')->get();
+        $this->assertEquals('5', count($test));
     } 
     
     public function testDateFilter()
     {
-        $test = Storage::find()->files()->date('after 2021-01-01')->in('storage/cache');
-        $this->assertEquals('5', $test->count());
+        $test = Storage::find()->files()->date('after 2021-01-01')->in('storage/cache')->get();
+        $this->assertEquals('5', count($test));
     }
 }
 

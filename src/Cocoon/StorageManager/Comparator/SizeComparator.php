@@ -9,19 +9,19 @@ use Cocoon\StorageManager\Exceptions\ValidationException;
 
 /**
  * Comparateur de taille pour le filtrage des fichiers
- * 
+ *
  * Cette classe permet de comparer les tailles des fichiers selon différents
  * critères et opérateurs. Elle supporte les comparaisons avec des tailles
  * spécifiques ou des expressions de taille.
- * 
+ *
  * Opérateurs supportés :
  * - >, >=, <, <=, ==, != : comparaisons classiques
- * 
+ *
  * Unités supportées :
  * - k, kb, kilo : kilo-octets (1024 octets)
  * - m, mb, mega : méga-octets (1024² octets)
  * - g, gb, giga : giga-octets (1024³ octets)
- * 
+ *
  * @package Cocoon\StorageManager\Comparator
  */
 class SizeComparator
@@ -47,7 +47,7 @@ class SizeComparator
 
     /**
      * Constructeur
-     * 
+     *
      * @param Finder $finder Instance du moteur de recherche
      */
     public function __construct(Finder $finder)
@@ -57,7 +57,7 @@ class SizeComparator
 
     /**
      * Filtre la collection selon le critère de taille
-     * 
+     *
      * @param string $size Expression de taille à comparer
      * @return void
      * @throws ValidationException Si l'expression de taille est invalide
@@ -72,7 +72,7 @@ class SizeComparator
 
     /**
      * Compare une taille de fichier avec une expression de taille
-     * 
+     *
      * @param int $file_size Taille du fichier en octets
      * @param string $size Expression de taille à comparer
      * @return bool True si la comparaison est valide

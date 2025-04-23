@@ -33,9 +33,8 @@ class FileManagerTest extends TestCase
 
     public function testFileCreation()
     {
-        $fileManager = Storage::file('/tmp/test.txt');
-        $fileManager->put($this->fileContents);
-
+        Storage::put('/tmp/test.txt', $this->fileContents);
+    
         $this->assertTrue(file_exists( __DIR__ . '/tmp/' . $this->filePath));
         $this->assertEquals($this->fileContents, file_get_contents( __DIR__ . '/tmp/' . $this->filePath));
     }
@@ -54,8 +53,8 @@ class FileManagerTest extends TestCase
     {
         file_put_contents( __DIR__ . '/tmp/' . $this->filePath, $this->fileContents);
 
-        $fileManager = Storage::file('/tmp/test.txt');
-        $contents = $fileManager->get();
+        $contents = Storage::get('/tmp/test.txt');
+
 
         $this->assertEquals($this->fileContents, $contents);
     }
@@ -65,8 +64,7 @@ class FileManagerTest extends TestCase
         $newPath = 'test_copy.txt';
         file_put_contents( __DIR__ . '/tmp/' . $this->filePath, $this->fileContents);
         //Storage::mkdir('copy');
-        $fileManager = Storage::file('/tmp/test.txt');
-        $fileManager->copy( '/tmp/copy/' . $newPath);
+        Storage::copy('/tmp/test.txt', '/tmp/copy/' . $newPath);
 
         $this->assertTrue(file_exists( __DIR__ . '/tmp/copy/' . $newPath));
         $this->assertEquals($this->fileContents, file_get_contents( __DIR__ . '/tmp/copy/' . $newPath));
@@ -79,8 +77,7 @@ class FileManagerTest extends TestCase
         $newPath = 'test_move.txt';
         file_put_contents( __DIR__ . '/tmp/' . $this->filePath, $this->fileContents);
 
-        $fileManager = Storage::file('/tmp/test.txt');
-        $fileManager->move(  '/tmp/copy/' . $newPath);
+        Storage::move('/tmp/test.txt', '/tmp/copy/' . $newPath);
 
         $this->assertFalse(file_exists(__DIR__ . '/tmp/' . $this->filePath));
         $this->assertTrue(file_exists( __DIR__ . '/tmp/copy/' . $newPath));
@@ -94,8 +91,7 @@ class FileManagerTest extends TestCase
     {
         file_put_contents(__DIR__ . '/tmp/' . $this->filePath, $this->fileContents);
 
-        $fileManager = Storage::file('/tmp/test.txt');
-        $fileManager->delete();
+        Storage::delete('/tmp/test.txt');
 
         $this->assertFalse(file_exists( __DIR__ . '/tmp/' . $this->filePath));
     }

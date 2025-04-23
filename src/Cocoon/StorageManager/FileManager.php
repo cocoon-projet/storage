@@ -10,11 +10,11 @@ use Cocoon\StorageManager\Exceptions\StorageOperationException;
 
 /**
  * Gestionnaire de fichiers
- * 
+ *
  * Cette classe fournit une interface orientée objet pour la gestion des fichiers.
  * Elle encapsule les opérations de base sur les fichiers et ajoute des fonctionnalités
  * avancées comme la validation et la manipulation des métadonnées.
- * 
+ *
  * @package Cocoon\StorageManager
  */
 class FileManager
@@ -27,7 +27,7 @@ class FileManager
 
     /**
      * Constructeur
-     * 
+     *
      * @param string $path Chemin du fichier
      * @param Filesystem $filesystem Instance du système de fichiers
      */
@@ -39,7 +39,7 @@ class FileManager
 
     /**
      * Obtient le nom du fichier
-     * 
+     *
      * @return string Nom du fichier
      */
     public function filename(): string
@@ -49,7 +49,7 @@ class FileManager
 
     /**
      * Obtient l'extension du fichier
-     * 
+     *
      * @return string Extension du fichier
      */
     public function extension(): string
@@ -59,7 +59,7 @@ class FileManager
 
     /**
      * Obtient le nom complet du fichier
-     * 
+     *
      * @return string Nom complet du fichier
      */
     public function name(): string
@@ -69,7 +69,7 @@ class FileManager
 
     /**
      * Vérifie si le fichier existe
-     * 
+     *
      * @return bool True si le fichier existe
      */
     public function exists(): bool
@@ -79,7 +79,7 @@ class FileManager
 
     /**
      * Lit le contenu du fichier
-     * 
+     *
      * @return string Contenu du fichier
      * @throws StorageOperationException En cas d'erreur de lecture
      */
@@ -94,7 +94,7 @@ class FileManager
 
     /**
      * Écrit du contenu dans le fichier
-     * 
+     *
      * @param string $contents Contenu à écrire
      * @param array $config Options de configuration
      * @return void
@@ -111,7 +111,7 @@ class FileManager
 
     /**
      * Supprime le fichier
-     * 
+     *
      * @return void
      * @throws StorageOperationException En cas d'erreur de suppression
      */
@@ -126,7 +126,7 @@ class FileManager
 
     /**
      * Copie le fichier vers un nouvel emplacement
-     * 
+     *
      * @param string $newPath Nouveau chemin
      * @return void
      * @throws StorageOperationException En cas d'erreur de copie
@@ -142,7 +142,7 @@ class FileManager
 
     /**
      * Déplace le fichier vers un nouvel emplacement
-     * 
+     *
      * @param string $newPath Nouveau chemin
      * @return void
      * @throws StorageOperationException En cas d'erreur de déplacement
@@ -159,7 +159,7 @@ class FileManager
 
     /**
      * Obtient la taille du fichier
-     * 
+     *
      * @return int Taille en octets
      * @throws StorageOperationException En cas d'erreur
      */
@@ -168,13 +168,17 @@ class FileManager
         try {
             return $this->filesystem->fileSize($this->path);
         } catch (\Exception $e) {
-            throw new StorageOperationException("Échec de la récupération de la taille du fichier : {$this->path}", 0, $e);
+            throw new StorageOperationException(
+                "Échec de la récupération de la taille du fichier : {$this->path}",
+                0,
+                $e
+            );
         }
     }
 
     /**
      * Obtient la date de dernière modification
-     * 
+     *
      * @return int Timestamp Unix
      * @throws StorageOperationException En cas d'erreur
      */
@@ -183,13 +187,17 @@ class FileManager
         try {
             return $this->filesystem->lastModified($this->path);
         } catch (\Exception $e) {
-            throw new StorageOperationException("Échec de la récupération de la date de modification : {$this->path}", 0, $e);
+            throw new StorageOperationException(
+                "Échec de la récupération de la date de modification : {$this->path}",
+                0,
+                $e
+            );
         }
     }
 
     /**
      * Obtient le type MIME du fichier
-     * 
+     *
      * @return string Type MIME
      * @throws StorageOperationException En cas d'erreur
      */
@@ -204,7 +212,7 @@ class FileManager
 
     /**
      * Obtient le chemin du fichier
-     * 
+     *
      * @return string Chemin du fichier
      */
     public function getPath(): string
@@ -214,7 +222,7 @@ class FileManager
 
     /**
      * Définit la visibilité du fichier
-     * 
+     *
      * @param string $visibility Visibilité ('public' ou 'private')
      * @return void
      * @throws StorageOperationException En cas d'erreur de modification
@@ -230,7 +238,7 @@ class FileManager
 
     /**
      * Obtient la visibilité du fichier
-     * 
+     *
      * @return string Visibilité ('public' ou 'private')
      * @throws StorageOperationException En cas d'erreur de lecture
      */
@@ -245,7 +253,7 @@ class FileManager
 
     /**
      * Génère une URL publique pour le fichier
-     * 
+     *
      * @param array $config Options de configuration
      * @return string URL publique
      * @throws StorageOperationException En cas d'erreur de génération
@@ -261,7 +269,7 @@ class FileManager
 
     /**
      * Génère une URL temporaire pour le fichier
-     * 
+     *
      * @param int $expiration Durée de validité en secondes
      * @param DateTimeInterface $expiresAt Date d'expiration
      * @param array $config Options de configuration
@@ -279,7 +287,7 @@ class FileManager
 
     /**
      * Calcule le checksum du fichier
-     * 
+     *
      * @param string $path Chemin du fichier
      * @param array $config Options de configuration
      * @return string Checksum
@@ -296,7 +304,7 @@ class FileManager
 
     /**
      * Obtient la date de dernière modification sous forme d'objet Carbon
-     * 
+     *
      * @param string $locale Locale pour la date (par défaut: 'fr')
      * @return Carbon Instance Carbon de la date
      * @throws StorageOperationException En cas d'erreur de lecture

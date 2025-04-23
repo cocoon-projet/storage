@@ -6,11 +6,11 @@ namespace Cocoon\StorageManager;
 
 /**
  * Configuration du stockage
- * 
+ *
  * Cette classe permet de gérer la configuration du stockage de manière
  * centralisée et flexible. Elle supporte différentes options de configuration
  * comme le chemin de base, les adaptateurs, les options de cache, etc.
- * 
+ *
  * @package Cocoon\StorageManager
  */
 class StorageConfig
@@ -32,7 +32,7 @@ class StorageConfig
 
     /**
      * Constructeur
-     * 
+     *
      * @param string $basePath Chemin de base pour le stockage
      * @param array $options Options de configuration
      */
@@ -44,7 +44,7 @@ class StorageConfig
 
     /**
      * Obtient le chemin de base
-     * 
+     *
      * @return string Chemin de base
      */
     public function getBasePath(): string
@@ -54,7 +54,7 @@ class StorageConfig
 
     /**
      * Obtient une option de configuration
-     * 
+     *
      * @param string $key Clé de l'option
      * @param mixed $default Valeur par défaut
      * @return mixed Valeur de l'option
@@ -66,7 +66,7 @@ class StorageConfig
 
     /**
      * Définit une option de configuration
-     * 
+     *
      * @param string $key Clé de l'option
      * @param mixed $value Valeur de l'option
      * @return void
@@ -78,7 +78,7 @@ class StorageConfig
 
     /**
      * Obtient toutes les options de configuration
-     * 
+     *
      * @return array Options de configuration
      */
     public function getOptions(): array
@@ -88,7 +88,7 @@ class StorageConfig
 
     /**
      * Vérifie si une option existe
-     * 
+     *
      * @param string $key Clé de l'option
      * @return bool True si l'option existe
      */
@@ -99,7 +99,7 @@ class StorageConfig
 
     /**
      * Crée une instance de configuration à partir d'un tableau
-     * 
+     *
      * @param array $config Configuration
      * @return self Instance de configuration
      */
@@ -109,4 +109,4 @@ class StorageConfig
         $options = $config['options'] ?? [];
         return new self($basePath, $options);
     }
-} 
+}

@@ -18,16 +18,16 @@ use Cocoon\StorageManager\Exceptions\ValidationException;
 
 /**
  * Moteur de recherche de fichiers
- * 
+ *
  * Cette classe permet de rechercher des fichiers selon différents critères
  * et de les filtrer selon leur taille, date, extension, etc.
- * 
+ *
  * Fonctionnalités principales :
  * - Recherche de fichiers et répertoires
  * - Filtrage par taille, date, extension
  * - Tri par différents critères
  * - Support des expressions de recherche avancées
- * 
+ *
  * @package Cocoon\StorageManager
  */
 class Finder implements IteratorAggregate, Countable
@@ -58,7 +58,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Constructeur
-     * 
+     *
      * @param Filesystem $filesystem Instance du système de fichiers
      */
     public function __construct(Filesystem $filesystem)
@@ -68,7 +68,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Définit le chemin de recherche
-     * 
+     *
      * @param string $path Chemin à rechercher
      * @return $this Instance courante pour le chaînage
      */
@@ -80,7 +80,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Recherche uniquement les fichiers
-     * 
+     *
      * @return $this Instance courante pour le chaînage
      */
     public function files(): self
@@ -91,7 +91,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Recherche uniquement les répertoires
-     * 
+     *
      * @return $this Instance courante pour le chaînage
      */
     public function directories(): self
@@ -102,7 +102,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Filtre par extensions
-     * 
+     *
      * @param string|array $extensions Extension(s) à inclure
      * @return $this Instance courante pour le chaînage
      */
@@ -114,7 +114,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Exclut des extensions
-     * 
+     *
      * @param string|array $extensions Extension(s) à exclure
      * @return $this Instance courante pour le chaînage
      */
@@ -126,7 +126,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Filtre par taille
-     * 
+     *
      * @param string|array $size Expression(s) de taille
      * @return $this Instance courante pour le chaînage
      * @throws ValidationException Si l'expression de taille est invalide
@@ -139,7 +139,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Filtre par date
-     * 
+     *
      * @param string|array $date Expression(s) de date
      * @return $this Instance courante pour le chaînage
      * @throws ValidationException Si l'expression de date est invalide
@@ -152,7 +152,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Exécute la recherche
-     * 
+     *
      * @return array Liste des fichiers trouvés
      * @throws ValidationException En cas d'erreur de validation
      */
@@ -165,7 +165,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Liste le contenu d'un répertoire de manière récursive
-     * 
+     *
      * @param string $path Chemin à lister
      * @return array Liste des fichiers et répertoires
      */
@@ -193,7 +193,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Vérifie si un élément correspond aux filtres
-     * 
+     *
      * @param FileAttributes|DirectoryAttributes $item Élément à vérifier
      * @return bool True si l'élément correspond aux filtres
      */
@@ -227,7 +227,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Applique les filtres à la collection
-     * 
+     *
      * @return void
      * @throws ValidationException En cas d'erreur de validation
      */
@@ -250,7 +250,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Trie la collection par date de modification
-     * 
+     *
      * @param bool $descending True pour trier par ordre décroissant
      * @return $this Instance courante pour le chaînage
      */
@@ -265,7 +265,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Trie la collection par taille
-     * 
+     *
      * @param bool $descending True pour trier par ordre décroissant
      * @return $this Instance courante pour le chaînage
      */
@@ -280,7 +280,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Trie la collection par extension
-     * 
+     *
      * @param bool $descending True pour trier par ordre décroissant
      * @return $this Instance courante pour le chaînage
      */
@@ -298,7 +298,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Trie la collection par nom
-     * 
+     *
      * @param bool $descending True pour trier par ordre décroissant
      * @return $this Instance courante pour le chaînage
      */
@@ -313,7 +313,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Vérifie si des résultats ont été trouvés
-     * 
+     *
      * @return bool True si des résultats existent
      */
     public function hasResults(): bool
@@ -323,7 +323,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Obtient un itérateur pour la collection
-     * 
+     *
      * @return ArrayIterator
      */
     public function getIterator(): ArrayIterator
@@ -333,17 +333,17 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Obtient le nombre d'éléments dans la collection
-     * 
+     *
      * @return int Nombre d'éléments
      */
     public function count(): int
     {
-        return count($this->collection);
+        return count($this->get());
     }
 
     /**
      * Convertit la collection en tableau
-     * 
+     *
      * @return array Tableau des résultats
      */
     public function toArray(): array
@@ -355,7 +355,7 @@ class Finder implements IteratorAggregate, Countable
 
     /**
      * Affiche le contenu de la collection (débogage)
-     * 
+     *
      * @return void
      */
     public function dump(): void
